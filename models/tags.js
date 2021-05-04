@@ -1,5 +1,5 @@
-"use strict"
-const { Model } = require("sequelize")
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Tags extends Model {
     /**
@@ -13,10 +13,10 @@ module.exports = (sequelize, DataTypes) => {
         through: "ProjectsTags",
         foreignKey: "tagId",
         otherKey: "projectId",
-      })
+      });
     }
     toJSON() {
-      return { ...this.get(), id: undefined }
+      return { ...this.get(), id: undefined };
     }
   }
   Tags.init(
@@ -43,8 +43,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       tableName: "tags",
-      modelName: "Tags",
+      modelName: "Tag",
     }
-  )
-  return Tags
-}
+  );
+  return Tags;
+};
