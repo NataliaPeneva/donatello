@@ -2,7 +2,7 @@ const { Router } = require("express");
 
 const router = new Router();
 const { authenticateToken } = require("../middlewares/auth");
-const { Projects, Donations, Tags, ProjectsTags } = require("../models");
+const { Projects, Donations, Tag, ProjectTag } = require("../models");
 const { userIdVerification } = require("../middlewares/userVerification");
 const { findUserById } = require("../services/userService");
 const { findProjectById } = require("../services/projectService");
@@ -91,19 +91,23 @@ router.post(
     try {
       const user = await findUserById(userId);
 
-      const project = await Projects.create({
-        projectName,
-        projectDescription,
-        userId: user.id,
-      });
+      const project = await Projects.create(
+        {
+          projectName,
+          projectDescription,
+          userId: user.id,
+          ProjectTags: tagIds.map((tagId) => ({ tagId: tagId })),
+        },
+        { include: [ProjectTag] }
+      );
 
       // Issues:
       // 1. In the test our tagIds were undefined (issue with fake data)
       // 2. Model name was plural, should be singular
       // 3. Created at and Updated were not being added when calling project.addTags
-      const projectTagData = await project.addTags(tagIds);
+      // const projectTagData = await project.addTags(tagIds);
 
-      return res.json({ ...project.dataValues, projectTags: projectTagData });
+      return res.json({ ...project.dataValues });
     } catch (err) {
       console.log(err);
       return res.status(500).json(err.message);

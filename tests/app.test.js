@@ -16,12 +16,14 @@ beforeEach(async () => {
   await db.Donations.destroy({ where: {} });
   await db.Projects.destroy({ where: {} });
   await db.User.destroy({ where: {} });
+  await db.ProjectTag.destroy({ where: {} });
 });
 // tear down
 afterAll(async () => {
   await db.Donations.destroy({ where: {} });
   await db.Projects.destroy({ where: {} });
   await db.User.destroy({ where: {} });
+  await db.ProjectTag.destroy({ where: {} });
   await db.sequelize.close();
 });
 
@@ -267,7 +269,7 @@ describe("/projects (get)", () => {
 });
 
 describe("/projects/:userId (post)", () => {
-  test("should create a new project when sent valid access token, project name & desc, & tagIds", async (done) => {
+  test.only("should create a new project when sent valid access token, project name & desc, & tagIds", async (done) => {
     // arrange
     const { id: userId } = await db.User.create(fakeUser());
     const token = generateToken({ userId });
@@ -289,9 +291,8 @@ describe("/projects/:userId (post)", () => {
       .post("/projects/" + userId)
       .set("Authorization", `Bearer ${token}`)
       .send(body);
-
     // assert
-    expect(responseProject.body.projectTags).toHaveLength(2);
+    expect(responseProject.body.ProjectTags).toHaveLength(2);
     expect(responseProject.status).toBe(200);
     done();
   });
